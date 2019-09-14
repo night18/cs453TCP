@@ -1,19 +1,29 @@
 from socket import *
+import time
 
-serverName = '10.0.2.15' #Remeber to check Server IP by using ifconfig
+# serverName = '52.207.55.32' #Remeber to check Server IP by using ifconfig
+serverName = '10.0.2.15'
 serverPort = 12000
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((serverName, serverPort))
 print('Connect to the TCP server')
-message = ''
 
-while message != 'exit':
+# message = input('input lowercase sentence (type \"exit\", when you want to exit):\n')
+# clientSocket.send(message.encode())
 
-	message = input('input lowercase sentence (type \"exit\", when you want to exit):\n')
+text_from_server = clientSocket.recv(2048)
+decoded_text = text_from_server.decode()
+print(decoded_text)
+while decoded_text != "correct":
+	message = str(eval(decoded_text))
+	# message = input()
 	clientSocket.send(message.encode())
 
-	modifiedSentence = clientSocket.recv(1024)
-	print('From server: ', modifiedSentence.decode())
+	response_from_server = clientSocket.recv(2048)
+	decoded_text = response_from_server.decode()
+	print(decoded_text)
+	time.sleep(0.3)
+
 
 clientSocket.close()

@@ -1,5 +1,6 @@
 from socket import *
 from threading import Thread
+import random
 
 class ClientThread(Thread):
 	"""docstring for ClientTread"""
@@ -7,20 +8,36 @@ class ClientThread(Thread):
 		Thread.__init__(self)
 		self.ip = ip
 		self.port = port
-		self.client_socket =client_socket 
+		self.client_socket =client_socket
+		self.index = 0
 		print('New server socket connect to: {}:{}'.format(ip, port) )
 
-	def run(self):
-		while True:
-			# Using case translator as an example
-			data = self.client_socket.recv(2048).decode()
-			
-			if data == 'exit':
-				print('{}:{} ends the server socket'.format(self.ip, self.port))
-				break
+	def questionString(self):
+		ops = ['+', '-', '*']
+		rand1 = random.randint(1,10)
+		rand2 = random.randint(1,10)
+		operation = random.choice(ops)
+		answer = eval(str(rand1)+operation+str(rand2))
+		question = str(rand1)+operation+str(rand2)
+		encode_question = question.encode()
 
-			transfered_data = data.upper()
-			self.client_socket.send(transfered_data.encode())
+		return encode_question, answer
+
+
+	def run(self):
+		while self.index < 100:
+			encode_question, self.answer = self.questionString()
+			self.client_socket.send(encode_question)
+
+			student_answer = int(self.client_socket.recv(2048).decode())
+			if self.answer == student_answer:
+				self.index += 1
+			else:
+				self.client_socket.send("wrong\n".encode())
+
+		self.client_socket.send("correct".encode())
+		print(self.ip,"pass")
+
 
 def main():
 	host = ''
