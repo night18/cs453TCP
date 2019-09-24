@@ -1,8 +1,8 @@
 from socket import *
 import time
 
-# serverName = '52.207.55.32' #Remeber to check Server IP by using ifconfig
-serverName = '10.0.2.15'
+serverName = '52.207.55.32' #Remeber to check Server IP by using ifconfig
+# serverName = '10.0.2.15'
 serverPort = 12000
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
